@@ -1,0 +1,148 @@
+version: "3.6"
+services:
+  graphql-engine:
+    extends:
+      file: base/docker-compose.yml
+      service: graphql-engine
+    ports:
+      - "8070:8080"
+    labels:
+      - dev.orbstack.http-port=8080
+    environment:
+      HASURA_GRAPHQL_METADATA_DATABASE_URL: postgres://postgres:postgrespassword@hge_meta_1:5432/postgres
+      HASURA_GRAPHQL_ADMIN_SECRET: myadminsecretkey
+      HASURA_GRAPHQL_EE_LICENSE_KEY: ${HASURA_GRAPHQL_EE_LICENSE_KEY}
+      HASURA_GRAPHQL_CACHE_REDIS_HOST: redis
+      HASURA_GRAPHQL_CACHE_REDIS_PORT: "6379"
+      HASURA_GRAPHQL_CACHE_REDIS_PASSWORD: your_redis_password
+      HASURA_GRAPHQL_CACHE_REDIS_DATABASE: your_redis_database
+      PG_DB_1: postgres://postgres:postgrespassword@pg_db_1:5432/postgres
+      PG_DB_2: postgres://postgres:postgrespassword@pg_db_2:5432/postgres
+      PG_DB_3: postgres://postgres:postgrespassword@pg_db_3:5432/postgres
+      PG_DB_4: postgres://postgres:postgrespassword@pg_db_4:5432/postgres
+
+    depends_on:
+      - redis
+
+  graphql-events-engine:
+    extends:
+      file: base/docker-compose-events-engine.yml
+      service: graphql-engine
+    ports:
+      - "8090:8080"
+    environment:
+      HASURA_GRAPHQL_METADATA_DATABASE_URL: postgres://postgres:postgrespassword@hge_meta_2:5432/postgres
+      HASURA_GRAPHQL_ADMIN_SECRET: myadminsecretkey
+      HASURA_GRAPHQL_EE_LICENSE_KEY: ${HASURA_GRAPHQL_EE_LICENSE_KEY}
+      HASURA_GRAPHQL_CACHE_REDIS_HOST: redis
+      HASURA_GRAPHQL_CACHE_REDIS_PORT: "6379"
+      HASURA_GRAPHQL_CACHE_REDIS_PASSWORD: your_redis_password
+      HASURA_GRAPHQL_CACHE_REDIS_DATABASE: your_redis_database
+      PG_DB_1: postgres://postgres:postgrespassword@pg_db_1:5432/postgres
+      PG_DB_2: postgres://postgres:postgrespassword@pg_db_2:5432/postgres
+      PG_DB_3: postgres://postgres:postgrespassword@pg_db_3:5432/postgres
+      PG_DB_4: postgres://postgres:postgrespassword@pg_db_4:5432/postgres
+    depends_on:
+      - redis
+
+  data-connector-agent:
+    extends:
+      file: base/docker-compose.yml
+      service: data-connector-agent
+    ports:
+      - 8081:8081
+    environment:
+      QUARKUS_LOG_LEVEL: ERROR
+      QUARKUS_OPENTELEMETRY_ENABLED: "false"
+
+  hge_meta_1:
+    extends:
+      file: base/docker-compose.yml
+      service: postgres
+    ports:
+      - "5532:5432"
+    volumes:
+      - pg_db_1_meta:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: postgrespassword
+
+  hge_meta_2:
+    extends:
+      file: base/docker-compose.yml
+      service: postgres
+    ports:
+      - "5533:5432"
+    volumes:
+      - pg_db_2_meta:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: postgrespassword
+
+  pg_db_1:
+    extends:
+      file: base/docker-compose.yml
+      service: postgres
+    ports:
+      - "5534:5432"
+    volumes:
+      - pg_db_1_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgrespassword
+      POSTGRES_DB: db_1
+
+  pg_db_2:
+    extends:
+      file: base/docker-compose.yml
+      service: postgres
+    ports:
+      - "5535:5432"
+    volumes:
+      - pg_db_2_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgrespassword
+      POSTGRES_DB: db_2
+  pg_db_3:
+    extends:
+      file: base/docker-compose.yml
+      service: postgres
+    ports:
+      - "5536:5432"
+    volumes:
+      - pg_db_3_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgrespassword
+      POSTGRES_DB: db_2
+  pg_db_4:
+    extends:
+      file: base/docker-compose.yml
+      service: postgres
+    ports:
+      - "5537:5432"
+    volumes:
+      - pg_db_4_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgrespassword
+      POSTGRES_DB: db_2
+  redis:
+    image: redis:latest
+    restart: always
+    ports:
+      - "6379:6379"
+    environment:
+      REDIS_PASSWORD: your_redis_password
+  grafana:
+    image: grafana/grafana-enterprise
+    restart: unless-stopped
+    ports:
+      - "6060:3000"
+volumes:
+  db_data:
+  pg_db_1_meta:
+  pg_db_2_meta:
+  pg_db_1_data:
+  pg_db_2_data:
+  pg_db_3_data:
+  pg_db_4_data:

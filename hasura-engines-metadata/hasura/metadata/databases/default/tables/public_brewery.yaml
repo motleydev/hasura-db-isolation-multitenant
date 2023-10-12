@@ -1,0 +1,33 @@
+table:
+  name: brewery
+  schema: public
+array_relationships:
+  - name: beers
+    using:
+      foreign_key_constraint_on:
+        column: brewery_id
+        table:
+          name: beer
+          schema: public
+insert_permissions:
+  - role: local_admin
+    permission:
+      check: {}
+      columns:
+        - location
+        - name
+        - created_at
+        - updated_at
+        - brewery_id
+    comment: ""
+select_permissions:
+  - role: local_admin
+    permission:
+      columns:
+        - location
+        - name
+        - created_at
+        - updated_at
+        - brewery_id
+      filter: {}
+    comment: ""

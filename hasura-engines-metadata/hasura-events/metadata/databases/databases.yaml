@@ -1,0 +1,28 @@
+- name: nordic
+  kind: postgres
+  configuration:
+    connection_info:
+      database_url:
+        from_env: PG_DB_2
+      isolation_level: read-committed
+      use_prepared_statements: false
+  customization:
+    root_fields:
+      namespace: nordic
+      prefix: nordic_
+    type_names:
+      prefix: nordic_
+  tables: "!include nordic/tables/tables.yaml"
+- name: super
+  kind: postgres
+  configuration:
+    connection_info:
+      database_url:
+        from_env: PG_DB_1
+      isolation_level: read-committed
+      use_prepared_statements: false
+  customization:
+    root_fields:
+      namespace: super
+      prefix: super_
+  tables: "!include super/tables/tables.yaml"

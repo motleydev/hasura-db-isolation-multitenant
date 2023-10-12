@@ -1,0 +1,41 @@
+databaseType = "PostgreSql"
+name = "flyway"
+id = "77cb1459-4ec0-4f01-8388-99dc3b64c4c2"
+
+[flywayDesktop]
+developmentEnvironment = "development"
+shadowEnvironment = "shadow"
+schemaModel = "./schema-model"
+
+[redgateCompare]
+filterFile = "filter.rgf"
+
+[flyway]
+mixed = true
+outOfOrder = true
+locations = ["filesystem:migrations"]
+validateMigrationNaming = true
+
+[environments.pgdb1]
+url = "jdbc:postgresql://localhost:5534/postgres"
+user = "postgres"
+password = "postgrespassword"
+schemas = ["public"]
+
+[environments.pgdb2]
+url = "jdbc:postgresql://localhost:5535/postgres"
+user = "postgres"
+password = "postgrespassword"
+schemas = ["public"]
+
+[environments.pgdb3]
+url = "jdbc:postgresql://localhost:5536/postgres"
+schemas = ["public"]
+user = "postgres"
+password = "postgrespassword"
+
+[environments.pgdb4]
+url = "jdbc:postgresql://localhost:5537/postgres"
+schemas = ["public"]
+user = "postgres"
+password = "postgrespassword"

@@ -1,0 +1,46 @@
+- name: default
+  kind: postgres
+  configuration:
+    connection_info:
+      database_url:
+        from_env: PG_DB_1
+      isolation_level: read-committed
+      use_prepared_statements: false
+    connection_set:
+      - connection_info:
+          database_url:
+            from_env: PG_DB_1
+          isolation_level: read-committed
+          use_prepared_statements: false
+        name: pg_db_1
+      - connection_info:
+          database_url:
+            from_env: PG_DB_3
+          isolation_level: read-committed
+          use_prepared_statements: false
+        name: pg_db_3
+      - connection_info:
+          database_url:
+            from_env: PG_DB_2
+          isolation_level: read-committed
+          use_prepared_statements: false
+        name: pg_db_2
+      - connection_info:
+          database_url:
+            from_env: PG_DB_4
+          isolation_level: read-committed
+          use_prepared_statements: false
+        name: pg_db_4
+    connection_template:
+      template: |-
+        {{ if ($.request.session.x-hasura-tenant-id == "nordic")}}
+            {{$.connection_set.pg_db_2}}
+        {{ elif ($.request.session.x-hasura-tenant-id == "french")}}
+            {{$.connection_set.pg_db_3}}
+        {{ elif ($.request.session.x-hasura-tenant-id == "german")}}
+            {{$.connection_set.pg_db_4}}
+        {{ else }}
+            {{$.default}}
+        {{ end }}
+      version: 1
+  tables: "!include default/tables/tables.yaml"

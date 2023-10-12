@@ -1,0 +1,22 @@
+table:
+  name: beer
+  schema: public
+object_relationships:
+  - name: brewery
+    using:
+      foreign_key_constraint_on: brewery_id
+array_relationships:
+  - name: inventories
+    using:
+      foreign_key_constraint_on:
+        column: beer_id
+        table:
+          name: inventory
+          schema: public
+  - name: orders
+    using:
+      foreign_key_constraint_on:
+        column: beer_id
+        table:
+          name: orders
+          schema: public
